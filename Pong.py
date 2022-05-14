@@ -1,5 +1,3 @@
-# Developer : Hamdy Abou El Anein
-
 import random
 import pygame
 import sys
