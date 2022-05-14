@@ -6,7 +6,7 @@ font = ('Helvetica', 70, 'bold italic')
 sg.theme('DarkTeal9')
 sg.set_options(font=font)
 colors = (sg.theme_background_color(), sg.theme_background_color())
-#ändring
+
 columns_elements = [
     [sg.Text("Welcome to our Game Hub!")],
     [sg.Text("Please select your game")],
