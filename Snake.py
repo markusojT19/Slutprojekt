@@ -15,18 +15,18 @@ green = (0, 100, 0)
 blue = (50, 153, 213)
  
 #storleken på spelrutan, går att göra helskärm och större om man vill, testade de 
-dis_width = 600
-dis_height = 400
+dis_width = 1000
+dis_height = 600
  
 dis = pygame.display.set_mode((dis_width, dis_height))
-pygame.display.set_caption('Snake Game by Cappe o Maccuzer')
+pygame.display.set_caption('Green = snake   Blue = slow   Red = speed   Yellow = food   White = Bingo food')
  
 clock = pygame.time.Clock()
  
 #storleken och hastigheten på ormen, bör kunna tillfälligt ändra dessa, aka powerups
-snake_block = 10
+snake_block = 20
 snake_speed = 20
- 
+
  
 font_style = pygame.font.SysFont("bahnschrift", 25)
 score_font = pygame.font.SysFont("Timesnewroman", 35)
@@ -59,6 +59,7 @@ def gameLoop():
     fast_speed = 0
     slow_speed = 0
     new_speed = 0
+    timer = 0
  #Snake list är listan med kroppen senare, lengt håller bara kåll på din score, används inte praktiskt
     snake_List = []
     Length_of_snake = 1
@@ -70,6 +71,9 @@ def gameLoop():
     
     slowx = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
     slowy = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
+    
+    bingox = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
+    bingoy = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
  
     while not game_over:
             #game_close tar upp slutmenyn när den är True
@@ -116,11 +120,18 @@ def gameLoop():
         dis.fill(black)
         pygame.draw.rect(dis, yellow, [foodx, foody, snake_block, snake_block])
         pygame.draw.rect(dis, red, [speedx, speedy, snake_block, snake_block])
-        pygame.draw.rect(dis, blue, [slowx, slowy, snake_block, snake_block])
+        if new_speed > -10:
+            pygame.draw.rect(dis, blue, [slowx, slowy, snake_block, snake_block])
+        if timer in range(0,60):
+            pygame.draw.rect(dis, white, [bingox, bingoy, snake_block, snake_block])
         snake_Head = []
         snake_Head.append(x1)
         snake_Head.append(y1)
         snake_List.append(snake_Head)
+        
+        timer += 1
+        if timer > 140:
+            timer = 0
         
         #snake_list är listan med kroppens positioner, om huvudet är med tas huvudet bort
         if len(snake_List) > Length_of_snake:
@@ -155,6 +166,12 @@ def gameLoop():
         new_speed = fast_speed - slow_speed
         if new_speed < -10:
             new_speed = -10
+        
+        if timer in range(0,80):
+            if x1 == bingox and y1 == bingoy:
+                bingox = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
+                bingoy = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
+                Length_of_snake += 5
         
         clock.tick(snake_speed + new_speed)
     
