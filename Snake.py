@@ -25,17 +25,16 @@ clock = pygame.time.Clock()
  
 #storleken och hastigheten på ormen, bör kunna tillfälligt ändra dessa, aka powerups
 snake_block = 10
-snake_speed = 15
+snake_speed = 20
+ 
  
 font_style = pygame.font.SysFont("bahnschrift", 25)
-score_font = pygame.font.SysFont("comicsansms", 35)
+score_font = pygame.font.SysFont("Timesnewroman", 35)
  
  #Stylar scoreboarden tror jag
 def Your_score(score):
-    value = score_font.render("Your Score: " + str(score), True, yellow)
+    value = score_font.render("Your Score: " + str(score), True, red)
     dis.blit(value, [0, 0])
- 
- 
  
 def our_snake(snake_block, snake_list):
     for x in snake_list:
@@ -57,18 +56,26 @@ def gameLoop():
  #Variablerna som anger vilket håll ormen ska åt sen när man trycker på knapparna
     x1_change = 0
     y1_change = 0
+    fast_speed = 0
+    slow_speed = 0
+    new_speed = 0
  #Snake list är listan med kroppen senare, lengt håller bara kåll på din score, används inte praktiskt
     snake_List = []
     Length_of_snake = 1
+    foodx = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
+    foody = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
  
-    foodx = round(random.randrange(0, dis_width - snake_block) / 10.0) * 10.0
-    foody = round(random.randrange(0, dis_height - snake_block) / 10.0) * 10.0
+    speedx = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
+    speedy = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
+    
+    slowx = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
+    slowy = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
  
     while not game_over:
             #game_close tar upp slutmenyn när den är True
         while game_close == True:
             #While loopen här visar menyn och väntar på att man ska trycka q eller c
-            dis.fill(blue)
+            dis.fill(black)
             #Anropar message funktionen
             message("You Lost! Press C-Play Again or Q-Quit", red)
             #Anropar Your_score funktionen
@@ -101,17 +108,20 @@ def gameLoop():
                 elif event.key == pygame.K_DOWN:
                     y1_change = snake_block
                     x1_change = 0
- 
+        #kollar om ormen krockar med kanten av skärmen, avbryter isåfall
         if x1 >= dis_width or x1 < 0 or y1 >= dis_height or y1 < 0:
             game_close = True
         x1 += x1_change
         y1 += y1_change
-        dis.fill(blue)
-        pygame.draw.rect(dis, red, [foodx, foody, snake_block, snake_block])
+        dis.fill(black)
+        pygame.draw.rect(dis, yellow, [foodx, foody, snake_block, snake_block])
+        pygame.draw.rect(dis, red, [speedx, speedy, snake_block, snake_block])
+        pygame.draw.rect(dis, blue, [slowx, slowy, snake_block, snake_block])
         snake_Head = []
         snake_Head.append(x1)
         snake_Head.append(y1)
         snake_List.append(snake_Head)
+        
         #snake_list är listan med kroppens positioner, om huvudet är med tas huvudet bort
         if len(snake_List) > Length_of_snake:
             del snake_List[0]
@@ -126,11 +136,35 @@ def gameLoop():
         pygame.display.update()
         #Kollar om huvudet är på maten, här kan vi försöka lägga till powerups
         if x1 == foodx and y1 == foody:
-            foodx = round(random.randrange(0, dis_width - snake_block) / 10.0) * 10.0
-            foody = round(random.randrange(0, dis_height - snake_block) / 10.0) * 10.0
+            foodx = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
+            foody = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
             Length_of_snake += 1
+        
+            
+        if x1 == speedx and y1 == speedy:
+            speedx = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
+            speedy = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
+            fast_speed += 10
+        
+        if x1 == slowx and y1 == slowy:
+            slowx = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
+            slowy = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
+            slow_speed += 10
+        
+        #Fixar så farten aldrig går under 10
+        new_speed = fast_speed - slow_speed
+        if new_speed < -10:
+            new_speed = -10
+        
+        clock.tick(snake_speed + new_speed)
+    
+                
+                
+        
+            
+            
         #kanske kan använda clock.tick för att bestämma tid för powerups
-        clock.tick(snake_speed)
+        
  
     pygame.quit()
     quit()
