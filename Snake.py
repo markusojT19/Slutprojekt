@@ -1,3 +1,4 @@
+from types import CellType
 import pygame
 import time
 import random
@@ -59,7 +60,7 @@ def our_snake(snake_block, snake_list):
  #Stylar messaget som används senare
 def message(msg, color):
     mesg = font_style.render(msg, True, color)
-    dis.blit(mesg, [dis_width / 3, dis_height / 2])
+    dis.blit(mesg, [dis_width / 6, dis_height / 3])
  
 def gameLoop():
     game_over = False
@@ -88,14 +89,12 @@ def gameLoop():
     
     bingox = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
     bingoy = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
-    
-    highscore_list.append(Length_of_snake - 1)
  
     while not game_over:
             #game_close tar upp slutmenyn när den är True
         while game_close == True:
             #While loopen här visar menyn och väntar på att man ska trycka q eller c
-            dis.fill(white)
+            dis.fill(black)
             #Anropar message funktionen
             message("You Lost! Press C-Play Again or Q-Quit", red)
             #Anropar Your_score funktionen
@@ -139,7 +138,7 @@ def gameLoop():
         pygame.draw.rect(dis, red, [speedx, speedy, snake_block, snake_block])
         if new_speed > -10:
             pygame.draw.rect(dis, blue, [slowx, slowy, snake_block, snake_block])
-        if timer in range(0,80):
+        if timer in range(0,60):
             pygame.draw.rect(dis, white, [bingox, bingoy, snake_block, snake_block])
         snake_Head = []
         snake_Head.append(x1)
@@ -189,18 +188,10 @@ def gameLoop():
                 bingox = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
                 bingoy = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
                 Length_of_snake += 5
-        if timer == 80:
-            bingox = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
-            bingoy = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
         
         clock.tick(snake_speed + new_speed)
     
                 
-                
-        
-            
-            
-        #kanske kan använda clock.tick för att bestämma tid för powerups
         
  
     pygame.quit()
