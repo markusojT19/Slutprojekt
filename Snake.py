@@ -13,6 +13,7 @@ black = (0, 0, 0)
 red = (213, 50, 80)
 green = (0, 100, 0)
 blue = (50, 153, 213)
+gray = (128, 128, 128)
  
 #storleken på spelrutan, går att göra helskärm och större om man vill, testade de 
 dis_width = 1000
@@ -44,7 +45,7 @@ def our_snake(snake_block, snake_list):
  #Stylar messaget som används senare
 def message(msg, color):
     mesg = font_style.render(msg, True, color)
-    dis.blit(mesg, [dis_width / 6, dis_height / 3])
+    dis.blit(mesg, [dis_width / 3, dis_height / 2])
  
  
 def gameLoop():
@@ -79,7 +80,7 @@ def gameLoop():
             #game_close tar upp slutmenyn när den är True
         while game_close == True:
             #While loopen här visar menyn och väntar på att man ska trycka q eller c
-            dis.fill(black)
+            dis.fill(white)
             #Anropar message funktionen
             message("You Lost! Press C-Play Again or Q-Quit", red)
             #Anropar Your_score funktionen
@@ -122,7 +123,7 @@ def gameLoop():
         pygame.draw.rect(dis, red, [speedx, speedy, snake_block, snake_block])
         if new_speed > -10:
             pygame.draw.rect(dis, blue, [slowx, slowy, snake_block, snake_block])
-        if timer in range(0,60):
+        if timer in range(0,80):
             pygame.draw.rect(dis, white, [bingox, bingoy, snake_block, snake_block])
         snake_Head = []
         snake_Head.append(x1)
@@ -172,6 +173,9 @@ def gameLoop():
                 bingox = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
                 bingoy = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
                 Length_of_snake += 5
+        if timer == 80:
+            bingox = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
+            bingoy = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
         
         clock.tick(snake_speed + new_speed)
     
