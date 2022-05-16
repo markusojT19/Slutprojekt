@@ -60,7 +60,7 @@ def our_snake(snake_block, snake_list):
  #Stylar messaget som används senare
 def message(msg, color):
     mesg = font_style.render(msg, True, color)
-    dis.blit(mesg, [dis_width / 6, dis_height / 3])
+    dis.blit(mesg, [dis_width / 3, dis_height / 2])
  
 def gameLoop():
     game_over = False
