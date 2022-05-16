@@ -13,25 +13,39 @@ black = (0, 0, 0)
 red = (213, 50, 80)
 green = (0, 100, 0)
 blue = (50, 153, 213)
-gray = (128, 128, 128)
+dark_blue = (3, 1, 55)
  
-#storleken på spelrutan, går att göra helskärm och större om man vill, testade de 
-dis_width = 1000
-dis_height = 600
+snake_block = 20
+snake_speed = 20
+cell_number = 30
+
+dis_width = snake_block * (cell_number + 20)
+dis_height = snake_block * cell_number
  
 dis = pygame.display.set_mode((dis_width, dis_height))
 pygame.display.set_caption('Green = snake   Blue = slow   Red = speed   Yellow = food   White = Bingo food')
  
 clock = pygame.time.Clock()
  
-#storleken och hastigheten på ormen, bör kunna tillfälligt ändra dessa, aka powerups
-snake_block = 20
-snake_speed = 20
 
  
 font_style = pygame.font.SysFont("bahnschrift", 25)
 score_font = pygame.font.SysFont("Timesnewroman", 35)
  
+def draw_background(dis):
+    background_color = (3, 1, 40)
+    for row in range(cell_number + 20):
+        if row % 2 == 0:
+            for col in range(cell_number + 20):
+                if col % 2 == 0:
+                    background_rect = pygame.Rect(col * snake_block, row * snake_block, snake_block, snake_block)
+                    pygame.draw.rect(dis, background_color, background_rect)
+        else:
+            for col in range(cell_number + 20):
+                if col % 2 != 0:
+                    background_rect = pygame.Rect(col * snake_block, row * snake_block, snake_block, snake_block)
+                    pygame.draw.rect(dis, background_color, background_rect)
+
  #Stylar scoreboarden tror jag
 def Your_score(score):
     value = score_font.render("Your Score: " + str(score), True, red)
@@ -46,7 +60,6 @@ def our_snake(snake_block, snake_list):
 def message(msg, color):
     mesg = font_style.render(msg, True, color)
     dis.blit(mesg, [dis_width / 3, dis_height / 2])
- 
  
 def gameLoop():
     game_over = False
@@ -75,6 +88,8 @@ def gameLoop():
     
     bingox = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
     bingoy = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
+    
+    highscore_list.append(Length_of_snake - 1)
  
     while not game_over:
             #game_close tar upp slutmenyn när den är True
@@ -118,7 +133,8 @@ def gameLoop():
             game_close = True
         x1 += x1_change
         y1 += y1_change
-        dis.fill(black)
+        dis.fill(dark_blue)
+        draw_background(dis)
         pygame.draw.rect(dis, yellow, [foodx, foody, snake_block, snake_block])
         pygame.draw.rect(dis, red, [speedx, speedy, snake_block, snake_block])
         if new_speed > -10:
