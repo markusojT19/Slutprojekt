@@ -15,6 +15,7 @@ red = (213, 50, 80)
 green = (0, 100, 0)
 blue = (50, 153, 213)
 dark_blue = (3, 1, 55)
+color = (1, 1, 1)
  
 #storleken och hastigheten på ormen, bör kunna tillfälligt ändra dessa, aka powerups
 snake_block = 20
