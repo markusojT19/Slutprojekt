@@ -138,7 +138,7 @@ def gameLoop():
         pygame.draw.rect(dis, red, [speedx, speedy, snake_block, snake_block])
         if new_speed > -10:
             pygame.draw.rect(dis, blue, [slowx, slowy, snake_block, snake_block])
-        if timer in range(0,60):
+        if timer in range(0,80):
             pygame.draw.rect(dis, white, [bingox, bingoy, snake_block, snake_block])
         snake_Head = []
         snake_Head.append(x1)
