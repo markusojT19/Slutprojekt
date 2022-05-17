@@ -43,7 +43,7 @@ def draw_background(dis):
                     background_rect = pygame.Rect(col * snake_block, row * snake_block, snake_block, snake_block)
                     pygame.draw.rect(dis, background_color, background_rect)
 
-#Håller räkning på scoret
+#Ritar ut score
 def Your_score(score):
     value = score_font.render("Your Score: " + str(score), True, red)
     dis.blit(value, [0, 0])
@@ -53,7 +53,7 @@ def our_snake(snake_block, snake_list):
     for x in snake_list:
         pygame.draw.rect(dis, green, [x[0], x[1], snake_block, snake_block])
  
-#Stylar messaget som används senare
+#Stylar och placerar messaget som används senare
 def message(msg, color):
     mesg = font_style.render(msg, True, color)
     dis.blit(mesg, [dis_width / 3, dis_height / 2])
@@ -69,7 +69,7 @@ def gameLoop():
     y1_change = 0
     fast_speed = 0
     slow_speed = 0
-    new_speed = 0
+    speed_change = 0
     timer = 0
 
     snake_List = []
@@ -130,19 +130,19 @@ def gameLoop():
         draw_background(dis)
         pygame.draw.rect(dis, yellow, [foodx, foody, snake_block, snake_block])
         pygame.draw.rect(dis, red, [speedx, speedy, snake_block, snake_block])
-        if new_speed > -10:
+        if speed_change > -10:
             pygame.draw.rect(dis, blue, [slowx, slowy, snake_block, snake_block])
         if timer in range(0,80):
             pygame.draw.rect(dis, white, [bingox, bingoy, snake_block, snake_block])
+       
+        timer += 1
+        if timer > 140:
+            timer = 0
+       
         snake_Head = []
         snake_Head.append(x1)
         snake_Head.append(y1)
         snake_List.append(snake_Head)
-        
-        timer += 1
-        if timer > 140:
-            timer = 0
-        
         #snake_list är listan med kroppens positioner
         if len(snake_List) > Length_of_snake:
             del snake_List[0]
@@ -158,9 +158,9 @@ def gameLoop():
         if x1 == foodx and y1 == foody:
             foodx = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
             foody = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
-            if new_speed < 20:
+            if speed_change < 20:
                 Length_of_snake += 1
-            elif new_speed >= 20:
+            elif speed_change >= 20:
                 Length_of_snake += 2
         
             
@@ -175,24 +175,24 @@ def gameLoop():
             slow_speed += 10
         
         #Fixar så farten aldrig går under 10
-        new_speed = fast_speed - slow_speed
-        if new_speed < -10:
-            new_speed = -10
-        
-        if timer == 80:
-            bingox = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
-            bingoy = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
+        speed_change = fast_speed - slow_speed
+        if speed_change < -10:
+            speed_change = -10
         
         if timer in range(0,80):
             if x1 == bingox and y1 == bingoy:
                 bingox = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
                 bingoy = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
-                if new_speed < 20:
+                if speed_change < 20:
                     Length_of_snake += 5
-                elif new_speed >= 20:
+                elif speed_change >= 20:
                     Length_of_snake += 10
         
-        clock.tick(snake_speed + new_speed)
+        if timer == 80:
+            bingox = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
+            bingoy = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
+        
+        clock.tick(snake_speed + speed_change)
     
                 
         
