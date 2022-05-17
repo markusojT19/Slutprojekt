@@ -5,9 +5,6 @@ import random
  
 pygame.init()
 
-#definierar färgerna med rgb, assmidigt att ändra dem till lite snyggare om vi vill
-#Gjorde maten röd så det liknar äpplen o ormen grön men vi kanske vill göra nåt annat
-#Så det inte är en orm som äter äpplen utan nåt lite roligare 
 white = (255, 255, 255)
 yellow = (255, 255, 102)
 black = (0, 0, 0)
@@ -24,18 +21,17 @@ dis_width = snake_block * (cell_number + 20)
 dis_height = snake_block * cell_number
  
 dis = pygame.display.set_mode((dis_width, dis_height))
-pygame.display.set_caption('Green = snake   Blue = slow   Red = speed   Yellow = food   White = Bingo food')
+pygame.display.set_caption('Green = snake   Blue = slow   Red = speed   Yellow = food   White = 5x food')
  
 clock = pygame.time.Clock()
- 
-
  
 font_style = pygame.font.SysFont("bahnschrift", 25)
 score_font = pygame.font.SysFont("Timesnewroman", 35)
  
+#Stylar bakgrunden, rutnätet
 def draw_background(dis):
     background_color = (3, 1, 40)
-    for row in range(cell_number + 20):
+    for row in range(cell_number):
         if row % 2 == 0:
             for col in range(cell_number + 20):
                 if col % 2 == 0:
@@ -47,17 +43,17 @@ def draw_background(dis):
                     background_rect = pygame.Rect(col * snake_block, row * snake_block, snake_block, snake_block)
                     pygame.draw.rect(dis, background_color, background_rect)
 
- #Stylar scoreboarden tror jag
+#Håller räkning på scoret
 def Your_score(score):
     value = score_font.render("Your Score: " + str(score), True, red)
     dis.blit(value, [0, 0])
- 
+
+#Ritar ut ormen baserat på dess längd
 def our_snake(snake_block, snake_list):
     for x in snake_list:
-        #Denna funktion är det som ritar ormen så vi kan se den i spelet
         pygame.draw.rect(dis, green, [x[0], x[1], snake_block, snake_block])
  
- #Stylar messaget som används senare
+#Stylar messaget som används senare
 def message(msg, color):
     mesg = font_style.render(msg, True, color)
     dis.blit(mesg, [dis_width / 3, dis_height / 2])
@@ -65,19 +61,21 @@ def message(msg, color):
 def gameLoop():
     game_over = False
     game_close = False
- #Startpositionen, de delar med 2 för att få den att börja i mitten tror jag
+ #Startpositionen
     x1 = dis_width / 2
     y1 = dis_height / 2
- #Variablerna som anger vilket håll ormen ska åt sen när man trycker på knapparna
+
     x1_change = 0
     y1_change = 0
     fast_speed = 0
     slow_speed = 0
     new_speed = 0
     timer = 0
- #Snake list är listan med kroppen senare, lengt håller bara kåll på din score, används inte praktiskt
+
     snake_List = []
     Length_of_snake = 1
+    
+    #Sätter startpositionerna för mat, respektive boosters
     foodx = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
     foody = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
  
@@ -95,19 +93,15 @@ def gameLoop():
         while game_close == True:
             #While loopen här visar menyn och väntar på att man ska trycka q eller c
             dis.fill(black)
-            #Anropar message funktionen
             message("You Lost! Press C-Play Again or Q-Quit", red)
-            #Anropar Your_score funktionen
             Your_score(Length_of_snake - 1)
             pygame.display.update()
             
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
-                    #stänger ned när man klickar q
                     if event.key == pygame.K_q:
                         game_over = True
                         game_close = False
-                    #startar om när man klickar c
                     if event.key == pygame.K_c:
                         gameLoop()
         #Kollar om man trycker på quit knappen och ser till att ormen rör sig när man trycker på knapparna
@@ -149,7 +143,7 @@ def gameLoop():
         if timer > 140:
             timer = 0
         
-        #snake_list är listan med kroppens positioner, om huvudet är med tas huvudet bort
+        #snake_list är listan med kroppens positioner
         if len(snake_List) > Length_of_snake:
             del snake_List[0]
         #Kollar om någon av kroppsdelarna har samma position som huvudet (man har krockat)
@@ -161,11 +155,13 @@ def gameLoop():
         Your_score(Length_of_snake - 1)
  
         pygame.display.update()
-        #Kollar om huvudet är på maten, här kan vi försöka lägga till powerups
         if x1 == foodx and y1 == foody:
             foodx = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
             foody = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
-            Length_of_snake += 1
+            if new_speed < 20:
+                Length_of_snake += 1
+            elif new_speed >= 20:
+                Length_of_snake += 2
         
             
         if x1 == speedx and y1 == speedy:
@@ -183,11 +179,18 @@ def gameLoop():
         if new_speed < -10:
             new_speed = -10
         
+        if timer == 80:
+            bingox = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
+            bingoy = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
+        
         if timer in range(0,80):
             if x1 == bingox and y1 == bingoy:
                 bingox = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
                 bingoy = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
-                Length_of_snake += 5
+                if new_speed < 20:
+                    Length_of_snake += 5
+                elif new_speed >= 20:
+                    Length_of_snake += 10
         
         clock.tick(snake_speed + new_speed)
     
