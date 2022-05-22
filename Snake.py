@@ -3,15 +3,18 @@ import pygame
 import time
 import random
 import pickle
+from functions import Your_score, draw_background, message, our_snake, spawn_x, spawn_y
 
 pygame.init()
 
+num = 0
+
 white = (255, 255, 255)
 yellow = (255, 255, 102)
-black = (0, 0, 0)
+blue = (50, 153, 213)
 red = (213, 50, 80)
 green = (0, 100, 0)
-blue = (50, 153, 213)
+black = (0, 0, 0)
 dark_blue = (3, 1, 55)
  
 snake_block = 20
@@ -25,48 +28,11 @@ dis = pygame.display.set_mode((dis_width, dis_height))
 pygame.display.set_caption('Green = snake   Blue = slow   Red = speed   Yellow = food   White = 5x food')
  
 clock = pygame.time.Clock()
- 
-font_style = pygame.font.SysFont("bahnschrift", 25)
-score_font = pygame.font.SysFont("Timesnewroman", 35)
- 
-def to_game(game_state):
-    #fixa så den gör sträng tillbaks till relevanta variabler.
-    new_game_state = game_state
-
-#Stylar bakgrunden, rutnätet
-def draw_background(dis):
-    background_color = (3, 1, 40)
-    for row in range(cell_number):
-        if row % 2 == 0:
-            for col in range(cell_number + 20):
-                if col % 2 == 0:
-                    background_rect = pygame.Rect(col * snake_block, row * snake_block, snake_block, snake_block)
-                    pygame.draw.rect(dis, background_color, background_rect)
-        else:
-            for col in range(cell_number + 20):
-                if col % 2 != 0:
-                    background_rect = pygame.Rect(col * snake_block, row * snake_block, snake_block, snake_block)
-                    pygame.draw.rect(dis, background_color, background_rect)
-
-#Ritar ut score
-def Your_score(score):
-    value = score_font.render("Your Score: " + str(score), True, red)
-    dis.blit(value, [0, 0])
-
-#Ritar ut ormen baserat på dess längd
-def our_snake(snake_block, snake_list):
-    for x in snake_list:
-        pygame.draw.rect(dis, green, [x[0], x[1], snake_block, snake_block])
- 
-#Stylar och placerar messaget som används senare
-def message(msg, color):
-    mesg = font_style.render(msg, True, color)
-    dis.blit(mesg, [dis_width / 3, dis_height / 2])
 
 def gameLoop():
     game_over = False
     game_close = False
- #Startpositionen
+
     x1 = dis_width / 2
     y1 = dis_height / 2
 
@@ -80,29 +46,28 @@ def gameLoop():
     snake_List = []
     Length_of_snake = 1
     
-    #Sätter startpositionerna för mat, respektive boosters
-    foodx = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
-    foody = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
+    foodx = spawn_x(num)
+    foody = spawn_y(num)
  
-    speedx = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
-    speedy = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
+    speedx = spawn_x(num)
+    speedy = spawn_y(num)
     
-    slowx = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
-    slowy = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
+    slowx = spawn_x(num)
+    slowy = spawn_y(num)
     
-    bingox = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
-    bingoy = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
+    bingox = spawn_x(num)
+    bingoy = spawn_y(num)
     
     try:
         game_state = pickle.load(open("savegame", "rb"))
-        print(game_state)
     except EOFError:
         game_state = []
     
     if len(game_state) > 0:
         snake_list = game_state[0]
         Length_of_snake = int(game_state[1])
-        speed_change = int(game_state[2])
+        slow_speed = int(game_state[2][0])
+        fast_speed = int(game_state[2][1])
         food_state = game_state[3]
         foodx = food_state[0][0]
         foody = food_state[0][1]
@@ -119,9 +84,7 @@ def gameLoop():
         y1_change = game_state[8]
 
     while not game_over:
-            #game_close tar upp slutmenyn när den är True
         while game_close == True:
-            #While loopen här visar menyn och väntar på att man ska trycka q eller c
             dis.fill(black)
             message("You Lost! Press C-Play Again or Q-Quit", red)
             Your_score(Length_of_snake - 1)
@@ -135,9 +98,9 @@ def gameLoop():
                         game_close = False
                     if event.key == pygame.K_c:
                         gameLoop()
-        #Kollar om man trycker på quit knappen och ser till att ormen rör sig när man trycker på knapparna
+
         food_state = [[foodx, foody], [speedx, speedy], [slowx, slowy], [bingox, bingoy]]
-        game_state = [snake_List] + [Length_of_snake] + [speed_change] + [food_state] + [timer] + [x1] + [y1] + [x1_change] + [y1_change]
+        game_state = [snake_List] + [Length_of_snake] + [[slow_speed] + [fast_speed]] + [food_state] + [timer] + [x1] + [y1] + [x1_change] + [y1_change]
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pickle.dump("", open("savegame", "wb"))
@@ -158,7 +121,7 @@ def gameLoop():
                 elif event.key == pygame.K_DOWN:
                     y1_change = snake_block
                     x1_change = 0
-        #kollar om ormen krockar med kanten av skärmen, avbryter isåfall
+
         if x1 >= dis_width or x1 < 0 or y1 >= dis_height or y1 < 0:
             game_close = True
         x1 += x1_change
@@ -180,10 +143,8 @@ def gameLoop():
         snake_Head.append(x1)
         snake_Head.append(y1)
         snake_List.append(snake_Head)
-        #snake_list är listan med kroppens positioner
         if len(snake_List) > Length_of_snake:
             del snake_List[0]
-        #Kollar om någon av kroppsdelarna har samma position som huvudet (man har krockat)
         for x in snake_List[:-1]:
             if x == snake_Head:
                 game_close = True
@@ -193,8 +154,8 @@ def gameLoop():
  
         pygame.display.update()
         if x1 == foodx and y1 == foody:
-            foodx = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
-            foody = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
+            foodx = spawn_x(num)
+            foody = spawn_y(num)
             if speed_change < 20:
                 Length_of_snake += 1
             elif speed_change >= 20:
@@ -202,32 +163,31 @@ def gameLoop():
         
             
         if x1 == speedx and y1 == speedy:
-            speedx = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
-            speedy = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
+            speedx = spawn_x(num)
+            speedy = spawn_y(num)
             fast_speed += 10
         
         if x1 == slowx and y1 == slowy:
-            slowx = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
-            slowy = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
+            slowx = spawn_x(num)
+            slowy = spawn_y(num)
             slow_speed += 10
         
-        #Fixar så farten aldrig går under 10
         speed_change = fast_speed - slow_speed
         if speed_change < -10:
             speed_change = -10
         
         if timer in range(0,80):
             if x1 == bingox and y1 == bingoy:
-                bingox = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
-                bingoy = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
+                bingox = spawn_x(num)
+                bingoy = spawn_y(num)
                 if speed_change < 20:
                     Length_of_snake += 5
                 elif speed_change >= 20:
                     Length_of_snake += 10
         
         if timer == 80:
-            bingox = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
-            bingoy = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
+            bingox = spawn_x(num)
+            bingoy = spawn_y(num)
         
         
         
