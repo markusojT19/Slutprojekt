@@ -5,7 +5,7 @@ import time
 import random
 import pickle
 from operator import itemgetter
-from functions import Your_score, draw_background, message, our_snake, snake, spawn_x, spawn_y, rectangle, food_pickup
+from functions import Your_score, draw_background, message, our_snake, snake, spawn_x, spawn_y, draw_rectangle, food_pickup
 
 pygame.init()
 
@@ -116,12 +116,12 @@ def gameLoop():
         y1 += y1_change
         dis.fill(dark_blue)
         draw_background(dis)
-        rectangle(yellow, foodx, foody)
-        rectangle(red, speedx, speedy)
+        draw_rectangle(yellow, foodx, foody)
+        draw_rectangle(red, speedx, speedy)
         if speed_change > -10:
-            rectangle(blue, slowx, slowy)
+            draw_rectangle(blue, slowx, slowy)
         if timer in range(0,80):
-            rectangle(white, bingox, bingoy)
+            draw_rectangle(white, bingox, bingoy)
             
         timer += 1
         if timer > 140:

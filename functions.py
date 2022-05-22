@@ -64,7 +64,7 @@ def spawn_y(y):
     y = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
     return y
 
-def rectangle(color, x, y):
+def draw_rectangle(color, x, y):
     pygame.draw.rect(dis, color,[x, y, snake_block, snake_block])
 
 def snake(posx, posy, Length_of_snake, snake_List):
