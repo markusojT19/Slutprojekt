@@ -56,11 +56,28 @@ def our_snake(snake_block, snake_list):
         
 num = 0
 
-def spawn_x(num):
-    num = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
-    return num
+def spawn_x(x):
+    x = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
+    return x
     
-def spawn_y(num):
-    num = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
-    return num
+def spawn_y(y):
+    y = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
+    return y
 
+def rectangle(color, x, y):
+    pygame.draw.rect(dis, color,[x, y, snake_block, snake_block])
+
+def snake(posx, posy, Length_of_snake, snake_List):
+    snake_Head = []
+    snake_Head.append(posx)
+    snake_Head.append(posy)
+    snake_List.append(snake_Head)
+    if len(snake_List) > Length_of_snake:
+        del snake_List[0]
+    for x in snake_List[:-1]:
+        if x == snake_Head:
+            return True
+
+def food_pickup(x1, y1, fx, fy):
+            if x1 == fx and y1 == fy:
+                return True
