@@ -2,7 +2,8 @@ from types import CellType
 import pygame
 import time
 import random
- 
+import pickle
+
 pygame.init()
 
 white = (255, 255, 255)
@@ -28,6 +29,10 @@ clock = pygame.time.Clock()
 font_style = pygame.font.SysFont("bahnschrift", 25)
 score_font = pygame.font.SysFont("Timesnewroman", 35)
  
+def to_game(game_state):
+    #fixa så den gör sträng tillbaks till relevanta variabler.
+    new_game_state = game_state
+
 #Stylar bakgrunden, rutnätet
 def draw_background(dis):
     background_color = (3, 1, 40)
@@ -57,7 +62,7 @@ def our_snake(snake_block, snake_list):
 def message(msg, color):
     mesg = font_style.render(msg, True, color)
     dis.blit(mesg, [dis_width / 3, dis_height / 2])
- 
+
 def gameLoop():
     game_over = False
     game_close = False
@@ -87,7 +92,32 @@ def gameLoop():
     
     bingox = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
     bingoy = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
- 
+    
+    try:
+        game_state = pickle.load(open("savegame", "rb"))
+        print(game_state)
+    except EOFError:
+        game_state = []
+    
+    if len(game_state) > 0:
+        snake_list = game_state[0]
+        Length_of_snake = int(game_state[1])
+        speed_change = int(game_state[2])
+        food_state = game_state[3]
+        foodx = food_state[0][0]
+        foody = food_state[0][1]
+        speedx = food_state[1][0]
+        speedy = food_state[1][1]
+        slowx = food_state[2][0]
+        slowy = food_state[2][1]
+        bingox = food_state[3][0]
+        bingoy = food_state[3][1]
+        timer = int(game_state[4])
+        x1 = game_state[5]
+        y1 = game_state[6]
+        x1_change = game_state[7]       
+        y1_change = game_state[8]
+
     while not game_over:
             #game_close tar upp slutmenyn när den är True
         while game_close == True:
@@ -96,6 +126,7 @@ def gameLoop():
             message("You Lost! Press C-Play Again or Q-Quit", red)
             Your_score(Length_of_snake - 1)
             pygame.display.update()
+            pickle.dump("", open("savegame", "wb"))
             
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
@@ -105,10 +136,16 @@ def gameLoop():
                     if event.key == pygame.K_c:
                         gameLoop()
         #Kollar om man trycker på quit knappen och ser till att ormen rör sig när man trycker på knapparna
+        food_state = [[foodx, foody], [speedx, speedy], [slowx, slowy], [bingox, bingoy]]
+        game_state = [snake_List] + [Length_of_snake] + [speed_change] + [food_state] + [timer] + [x1] + [y1] + [x1_change] + [y1_change]
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                pickle.dump("", open("savegame", "wb"))
                 game_over = True
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    pickle.dump(game_state, open("savegame", "wb"))
+                    game_over = True
                 if event.key == pygame.K_LEFT:
                     x1_change = -snake_block
                     y1_change = 0
@@ -192,7 +229,11 @@ def gameLoop():
             bingox = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
             bingoy = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
         
+        
+        
         clock.tick(snake_speed + speed_change)
+    
+        
     
                 
         
