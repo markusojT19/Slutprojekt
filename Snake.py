@@ -5,7 +5,7 @@ import time
 import random
 import pickle
 from operator import itemgetter
-from functions import Your_score, draw_background, message, our_snake, snake, spawn_x, spawn_y, draw_rectangle, food_pickup
+from functions import Your_score, draw_background, message, our_snake, snake, spawn_xy, draw_rectangle, food_pickup, speed_bonus
 
 pygame.init()
 
@@ -30,6 +30,7 @@ dis = pygame.display.set_mode((dis_width, dis_height))
 pygame.display.set_caption('Green = snake   Blue = slow   Red = speed   Yellow = food   White = 5x food')
  
 clock = pygame.time.Clock()
+
     
 def gameLoop():
     game_over = False
@@ -48,17 +49,13 @@ def gameLoop():
     snake_List = []
     Length_of_snake = 1
     
-    foodx = spawn_x(num)
-    foody = spawn_y(num)
+    foodx, foody = spawn_xy(num, num)
  
-    speedx = spawn_x(num)
-    speedy = spawn_y(num)
+    speedx, speedy = spawn_xy(num, num)
     
-    slowx = spawn_x(num)
-    slowy = spawn_y(num)
+    slowx, slowy = spawn_xy(num, num)
     
-    bingox = spawn_x(num)
-    bingoy = spawn_y(num)
+    bingox, bingoy = spawn_xy(num, num)
     
     try:
         game_state = pickle.load(open("savegame", "rb"))
@@ -87,6 +84,7 @@ def gameLoop():
 
         food_state = [foodx, foody, speedx, speedy, slowx, slowy, bingox, bingoy]
         game_state = [snake_List] + [Length_of_snake] + [slow_speed] + [fast_speed] + [food_state] + [timer] + [x1] + [y1] + [x1_change] + [y1_change]
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pickle.dump("", open("savegame", "wb"))
@@ -134,21 +132,15 @@ def gameLoop():
         pygame.display.update()
         
         if food_pickup(x1, y1, foodx, foody):
-            foodx = spawn_x(num)
-            foody = spawn_y(num)
-            if speed_change < 20:
-                Length_of_snake += 1
-            elif speed_change >= 20:
-                Length_of_snake += 2
+            foodx, foody = spawn_xy(foodx, foody)
+            Length_of_snake += speed_bonus(speed_change, 1)
             
         if food_pickup(x1, y1, speedx, speedy):
-            speedx = spawn_x(speedx)
-            speedy = spawn_y(speedy)
+            speedx, speedy = spawn_xy(speedx, speedy)
             fast_speed += 10
         
         if food_pickup(x1, y1, slowx, slowy):
-            slowx = spawn_x(num)
-            slowy = spawn_y(num)
+            slowx, slowy = spawn_xy(slowx, slowy)
             slow_speed += 10
         
         speed_change = fast_speed - slow_speed
@@ -157,16 +149,11 @@ def gameLoop():
         
         if timer in range(0,80):
             if food_pickup(x1, y1, bingox, bingoy):
-                bingox = spawn_x(num)
-                bingoy = spawn_y(num)
-                if speed_change < 20:
-                    Length_of_snake += 5
-                elif speed_change >= 20:
-                    Length_of_snake += 10
+                bingox, bingoy = spawn_xy(bingox, bingoy)
+                Length_of_snake += speed_bonus(speed_change, 5)
         
         if timer == 80:
-            bingox = spawn_x(num)
-            bingoy = spawn_y(num)
+            bingox, bingoy = spawn_xy(bingox, bingoy)
         
         clock.tick(snake_speed + speed_change)
     

@@ -51,13 +51,10 @@ def our_snake(snake_block, snake_list):
         
 num = 0
 
-def spawn_x(x):
+def spawn_xy(x, y):
     x = round(random.randrange(0, dis_width - snake_block) / snake_block) * snake_block
-    return x
-    
-def spawn_y(y):
     y = round(random.randrange(0, dis_height - snake_block) / snake_block) * snake_block
-    return y
+    return x, y
 
 def draw_rectangle(color, x, y):
     pygame.draw.rect(dis, color,[x, y, snake_block, snake_block])
@@ -76,3 +73,10 @@ def snake(posx, posy, Length_of_snake, snake_List):
 def food_pickup(x1, y1, fx, fy):
             if x1 == fx and y1 == fy:
                 return True
+            
+            
+def speed_bonus(speed, p):
+    if speed < 20:
+        return p
+    elif speed >= 20:
+        return 2 * p
