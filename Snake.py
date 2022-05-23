@@ -30,8 +30,6 @@ dis = pygame.display.set_mode((dis_width, dis_height))
 pygame.display.set_caption('Green = snake   Blue = slow   Red = speed   Yellow = food   White = 5x food')
  
 clock = pygame.time.Clock()
-
-
     
 def gameLoop():
     game_over = False

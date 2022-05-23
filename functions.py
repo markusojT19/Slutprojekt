@@ -7,13 +7,8 @@ import functions
 
 pygame.init()
 
-white = (255, 255, 255)
-yellow = (255, 255, 102)
-black = (0, 0, 0)
 red = (213, 50, 80)
 green = (0, 100, 0)
-blue = (50, 153, 213)
-dark_blue = (3, 1, 55)
 
 snake_block = 20
 snake_speed = 20
