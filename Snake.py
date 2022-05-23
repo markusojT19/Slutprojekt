@@ -1,12 +1,7 @@
-from queue import Empty
-from types import CellType
 import pygame
-import time
-import random
 import pickle
-from operator import itemgetter
-from GameFunctions import snake, spawn_xy, on_food, speed_bonus, speed, check, time_tracker, save, snake_outside
-from DrawFunctions import draw_background, message, our_snake, draw_rectangle, Your_score, draw_bingo, draw_slow
+from GameFunctions import snake, spawn_xy, on_food, speed_bonus, speed, check, time_tracker, save, snake_outside, saved_game_exists
+from DrawFunctions import draw_background, message, draw_our_snake, draw_rectangle, draw_score, draw_bingo, draw_slow
 
 pygame.init()
 
@@ -31,7 +26,6 @@ dis = pygame.display.set_mode((dis_width, dis_height))
 pygame.display.set_caption('Green = snake   Blue = slow   Red = speed   Yellow = food   White = 5x food')
  
 clock = pygame.time.Clock()
-
     
 def gameLoop():
     game_over = False
@@ -53,7 +47,7 @@ def gameLoop():
     
     game_state = check()
 
-    if len(game_state) > 0:
+    if saved_game_exists(game_state):
         snake_List, Length_of_snake, slow_speed, fast_speed, food_state, timer, x1, y1, x1_change, y1_change = game_state
         foodx, foody, speedx, speedy, slowx, slowy, bingox, bingoy = food_state
         
@@ -61,7 +55,7 @@ def gameLoop():
         while game_close == True:
             dis.fill(black)
             message("You Lost! Press C-Play Again or Q-Quit", red)
-            Your_score(Length_of_snake - 1)
+            draw_score(Length_of_snake - 1)
             pygame.display.update()
             pickle.dump("", open("savegame", "wb"))
             
@@ -110,12 +104,13 @@ def gameLoop():
         if snake(x1, y1, Length_of_snake, snake_List):
             game_close = True
  
-        our_snake(snake_block, snake_List)
-        Your_score(Length_of_snake - 1)
+        draw_our_snake(snake_block, snake_List)
+        draw_score(Length_of_snake - 1)
         
         pygame.display.update()
 
         timer = time_tracker(timer)
+        
         if timer == 80:
             bingox, bingoy = spawn_xy(bingox, bingoy)        
 

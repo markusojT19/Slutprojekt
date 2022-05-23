@@ -1,4 +1,3 @@
-from types import CellType
 import pygame
 
 pygame.init()
@@ -36,14 +35,14 @@ def message(msg, color):
     mesg = font_style.render(msg, True, color)
     dis.blit(mesg, [dis_width / 3, dis_height / 2])
 
-def our_snake(snake_block, snake_list):
+def draw_our_snake(snake_block, snake_list):
     for x in snake_list:
         pygame.draw.rect(dis, green, [x[0], x[1], snake_block, snake_block])
 
 def draw_rectangle(color, x, y):
     pygame.draw.rect(dis, color,[x, y, snake_block, snake_block])
 
-def Your_score(score):
+def draw_score(score):
     value = score_font.render("Your Score: " + str(score), True, red)
     dis.blit(value, [0, 0]) 
 
